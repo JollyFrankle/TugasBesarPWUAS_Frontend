@@ -1,28 +1,31 @@
 <template>
     <v-container fluid class="body">
         <!-- side bar Kiri -->
-        <v-navigation-drawer app v-model="drawer" width="15%" max-width="300px" min-width="200px" color="#93A9D1" hide-overlay>
+        <v-navigation-drawer app v-model="drawer" width="15%" max-width="300px" min-width="200px" color="#93A9D1" class="sideNav" hide-overlay>
             <v-list-item>
                 <v-list-item-content>
                    
                     <v-img :src="require('@/assets/UAJY.png')" contain max-height="60"></v-img>
-                    <h1 style="font-family: Poppins; color: #FFFFFF; font-size: 150.5%; font-weight: 600;" class="text-center">Atma Jaya Social</h1>
+                    <h1 class="text-center" style="color:#FFFFFF">Atma Jaya Social</h1>
                 </v-list-item-content>
             </v-list-item>
             
             <v-divider></v-divider>
             <v-list nav>
-                <v-list-item class="my-5" v-for="menu in menus" :key="menu.title" link tag="router-link" :to="menu.to">
+                <v-list-item class="my-5 sidebar-menu-item" v-for="menu in menus" :key="menu.title" link tag="router-link" :to="menu.to">
                     <v-list-item-icon>
-                        <v-icon color="#394252">{{ menu.icon }}</v-icon>
+                        <v-icon>{{ menu.icon }}</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                        <v-list-item-title
-                            style="font-family: Poppins; color: #FFFFFF; font-size: 110.5%; font-weight: 600;">{{
-                                    menu.title
-                            }}</v-list-item-title>
-
-                            
+                        <v-list-item-title >{{ menu.title }}</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item @click="Logout()" class="my-5 sidebar-menu-item">
+                    <v-list-item-icon>
+                        <v-icon>mdi-logout</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title>Logout</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
@@ -103,9 +106,33 @@
 .post-content-large {
     font-size: 1.5rem;
 }
+
+.sideNav{
+   background-image: linear-gradient(  #58acec 50%, #b1eded 100%);
+}
+.body{
+    background-image: linear-gradient( 100deg, #64b2ee 10%, #b1eded 100%);
+    /* overlay background */
+}
+.sidebar-menu-item {
+    font-weight: bold;
+    color: #2c2c2c;
+}
+.sidebar-menu-item .v-icon {
+    color: #2c2c2c;
+}
+
+.sidebar-menu-item.v-list-item--active {
+    color: #fff;
+}
+.sidebar-menu-item.v-list-item--active .v-icon {
+    color: #fff;
+}
 </style>
 
 <script>
+import axios from "axios";
+import * as Api from "./ApiHelper";
 export default {
     name: 'LayoutTemplate',
     data() {
@@ -113,8 +140,8 @@ export default {
             drawer: true,
             menus: [
                 { title: 'Home', icon: 'mdi-home', to: '/' },
-                { title: 'Explore', icon: 'mdi-compass', to: '/explore' },
-                { title: 'MarketPlace', icon: ' mdi-store', to: '/market' },
+               // { title: 'Explore', icon: 'mdi-compass', to: '/explore' },
+                { title: 'Marketplace', icon: ' mdi-store', to: '/market' },
                 { title: 'Profil', icon: ' mdi-account', to: '/profil' },
             ],
             sb: {
@@ -133,14 +160,35 @@ export default {
             this.sb.icon = icon
         }
     },
+    setup(){
+        function Logout(){
+            axios.post(Api.BASE_URL + "/logout",{
+                // body: tidak ada
+            }, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + $cookies.get("SESSION")
+                }
+            })
+            .then((response) =>{
+                $cookies.remove("SESSION");
+                this.$router.push('/login');
+            }).catch((error) => {
+                this.sb.icon = "mdi-alert";
+                this.sb.message = error.response.data;
+                this.sb.color = "red";
+                this.sb.show = true;
+            });
+        }
+        return {
+            Logout,
+        }
+    },
     mounted() {
+        if($cookies.get("SESSION") == null){
+            this.$router.push('/login')
+        }
         this.$root.$on('snackbar', this.snackbar)
     },
 }
 </script>
-<style>
-.body{
-    background-color: #d3d9e1; /* For browsers that do not support gradients */
-
-}
-</style>

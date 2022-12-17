@@ -32,36 +32,37 @@
                         align-center 
                         justify-center>
 
+                        <v-form @submit.prevent="Login()">
+                            <v-card-title class="text-h6 text-center d-block pb-0">
+                                <v-img :src="require('@/assets/UAJY.png')" contain max-height="30"
+                                    style="-webkit-filter: drop-shadow( 2px 2px 2px #FFF);"></v-img>
+                                Welcome to Atma Jaya Social
+                            </v-card-title>
 
-                        <v-card-title class="text-h6 text-center d-block pb-0">
-                            <v-img :src="require('@/assets/UAJY.png')" contain max-height="30"
-                                style="-webkit-filter: drop-shadow( 2px 2px 2px #FFF);"></v-img>
-                            Welcome to Atma Jaya Social
-                        </v-card-title>
-
-                        
-                        <v-divider></v-divider>
-                        <v-card-text class="text-center pb-0">
-                            <!-- <v-form> -->
-                                <v-text-field v-model="user.username" label="Username/Email" type="text" prepend-inner-icon="mdi-account" color="blue" outlined :error-messages="validation.username"></v-text-field>
-                                <v-text-field v-model="user.password" label="Password" prepend-inner-icon="mdi-lock" color="blue" outlined :error-messages="validation.password"
-                                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                                :type="showPassword ? 'text' : 'password'"
-                                @click:append="showPassword = !showPassword"
-                                    
-                                    ></v-text-field>
-                            <!-- </v-form> -->
-                        </v-card-text>
-                        <v-card-actions>
-                            <!-- <v-row align="center" justify="end"> -->
-                                <!-- <v-spacer></v-spacer> -->
-                                <v-btn width="100%" color="primary" class="d-block" @click="Login()" >Login</v-btn>
-                                <!-- <v-spacer></v-spacer> -->
-                            <!-- </v-row> -->
-                        </v-card-actions>
-                        <v-card-actions >
-                            <v-btn :to="{name: 'Register'}"  color="primary"  text class="mx-auto"  @click="Register()"  >Register</v-btn>
-                        </v-card-actions>
+                            
+                            <v-divider></v-divider>
+                            <v-card-text class="text-center pb-0">
+                                <!-- <v-form> -->
+                                    <v-text-field v-model="user.username" label="Username/Email" type="text" prepend-inner-icon="mdi-account" color="blue" outlined :error-messages="validation.username"></v-text-field>
+                                    <v-text-field v-model="user.password" label="Password" prepend-inner-icon="mdi-lock" color="blue" outlined :error-messages="validation.password"
+                                    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                                    :type="showPassword ? 'text' : 'password'"
+                                    @click:append="showPassword = !showPassword"
+                                        
+                                        ></v-text-field>
+                                <!-- </v-form> -->
+                            </v-card-text>
+                            <v-card-actions>
+                                <!-- <v-row align="center" justify="end"> -->
+                                    <!-- <v-spacer></v-spacer> -->
+                                    <v-btn width="100%" color="primary" class="d-block" type="submit">Login</v-btn>
+                                    <!-- <v-spacer></v-spacer> -->
+                                <!-- </v-row> -->
+                            </v-card-actions>
+                            <v-card-actions >
+                                <v-btn :to="{name: 'Register'}"  color="primary"  text class="mx-auto"  @click="Register()"  >Register</v-btn>
+                            </v-card-actions>
+                        </v-form>
                     </v-card>
                 </v-col>
             </v-row>
@@ -130,7 +131,7 @@ export default {
                 validation.value.password = error.response.data.data;
                 snackbar.show = true;
                 snackbar.icon = "mdi-alert";
-                snackbar.message = "Username atau password salah!";
+                snackbar.message = error.response.data.data;
                 snackbar.color = "red";
             });
         }
@@ -149,10 +150,10 @@ export default {
 }
 
 </script>
-<style>
+<style scoped>
 .body{
-    background-color: brown; /* For browsers that do not support gradients */
-    background-image: linear-gradient( 135deg, #d7dde8 10%, #9cb4da 100%);
+    background-color: brown; /* For browsers that do not support gradients */    background-image: linear-gradient( 100deg, #c1eded 10%, #58acec 100%);
+    /* background-image: linear-gradient( 135deg, #d7dde8 10%, #9cb4da 100%); */
     /* background-image: linear-gradient(to bottom right, rgb(20, 75, 30) 50%, rgb(97, 62, 6)); */
 }
 </style>

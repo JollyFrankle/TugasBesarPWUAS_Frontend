@@ -15,7 +15,7 @@
                 </v-card-title>
                 <v-divider></v-divider>
 
-                <v-form @submit.prevent="Register()" @submit="Register()">
+                <v-form @submit.prevent="Register()">
                     <v-card-text class="text-center">
                         <!-- Input Name -->
                         <v-text-field v-model="user.name" label="Name" type="text" prepend-inner-icon="mdi-account" color="blue" outlined :error-messages="validation.name"></v-text-field>
@@ -132,10 +132,10 @@ export default {
 }
 
 </script>
-<style>
+<style scoped>
 .body{
-    background-color: brown; /* For browsers that do not support gradients */
-    background-image: linear-gradient( 135deg, #d7dde8 10%, #9cb4da 100%);
+
+    background-image: linear-gradient( 100deg, #c1eded 10%, #58acec 100%);
     /* background-image: linear-gradient(to bottom right, rgb(20, 75, 30) 50%, rgb(97, 62, 6)); */
 }
 </style>
