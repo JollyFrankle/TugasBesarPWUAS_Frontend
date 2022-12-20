@@ -180,16 +180,6 @@
                                 outlined
                                 rows="5"
                             ></v-textarea>
-
-                            <v-text-field
-                                v-model="tempUser.password"
-                                label="Password"
-                                outlined
-                                type="password"
-                                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                                :type="showPassword ? 'text' : 'password'"
-                                @click:append="showPassword = !showPassword"
-                            ></v-text-field>
                         </v-container>
                     </v-card-text>
 
