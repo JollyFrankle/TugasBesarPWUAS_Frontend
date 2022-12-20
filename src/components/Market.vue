@@ -2,18 +2,18 @@
         <v-main>         
             <!-- <v-container fluid>  -->
                 <!-- search and add   -->
-                <v-card elevation="3" class="mt-5 mx-6" style="border-radius: 6px;">
+                <v-card elevation="3" class="mt-5 mx-6" style="border-radius: 6px;" :loading="loading" :disabled="loading">
                     <v-row justify="center" align="center" style="margin:3px auto;">
                  <v-col>
                     <h2>Selamat Datang Di Market AJS</h2>
-                    <p style="font-family: 'Times', serif; font-size: " class="mb-0"><em>Marketplace Terbaik Dari AJS</em></p>
+                    <p style="font-family: 'Times', serif;" class="mb-0"><em>Marketplace Terbaik Dari AJS</em></p>
                 </v-col>
                 <v-col>
                     <v-btn 
                     class="font-weight-bold" 
                     style="margin:10px auto; font-size: 20px; text-transform: capitalize; float:right; color: #FFFFFF" 
                     x-large color="blue darken-1" 
-                    @click="dialog = true">Add Product</v-btn>
+                    @click="dialog = true; validation = []">Add Product</v-btn>
                 </v-col>
                 
                 </v-row>
@@ -22,7 +22,7 @@
         <!-- </v-container> -->
         
         <!-- Container Card  -->
-        <v-container>         
+        <v-container fluid>    
                 <v-tabs
                 background-color="#FFFFFF"
                 grow
@@ -41,7 +41,7 @@
                 <v-tab-item>
                     <!-- Card Buat View All Product -->
                     <v-row class="px-3 py-3">
-                        <v-col cols="4" v-for="product in Products" :key="product.id">
+                        <v-col cols="4" v-for="product in Products" :key="product.id" lg="4" md="6" sm="12">
                             <v-card class="mx-auto hover" max-width="auto" tile>
                                 <v-card-text>
                                     <v-list-item>
@@ -52,8 +52,6 @@
                                             <v-list-item-title class="title">{{product.user.name}}</v-list-item-title>
                                             <v-list-item-subtitle>@{{product.user.username }}</v-list-item-subtitle>
                                         </v-list-item-content>
-                                         <div class="text-center">
-                                </div>
                                     </v-list-item>
                                     <v-list-item-content>
                                         <v-list-item class="text-h4"> {{product.name}} </v-list-item>
@@ -76,7 +74,7 @@
             <v-tab-item>
                 <!-- View Buat MY Product -->
                 <v-row class="px-3 py-3">
-                    <v-col cols="4" v-for="product in myProducts" :key="product.id">
+                    <v-col cols="4" v-for="product in myProducts" :key="product.id" lg="4" md="6" sm="12">
                         <v-card class="mx-auto hover" max-width="auto" tile>
                             <v-card-text>
                                 <v-list-item>
@@ -137,7 +135,9 @@
             v-model="dialog" 
             persistent max-width="600px">
             <v-form @submit.prevent="createMarket">
-                <v-card class="hover">
+                <v-card class="hover" 
+                :loading="loading2"
+                :disabled="loading2">
                     <v-toolbar color="blue darken-1" dark class="headline">Add Product</v-toolbar>
                     <v-card-text>
                         <v-container>
@@ -197,7 +197,9 @@
             v-model="editProductDialog" 
             persistent max-width="600px">
             <v-form @submit.prevent="UpdateMarket">
-                <v-card>
+                <v-card 
+                :loading="loading2"
+                :disabled="loading2">
                     <v-toolbar color="blue darken-1" dark class="headline">Update Product</v-toolbar>
                     <v-card-text>
                         <v-container>
@@ -291,7 +293,11 @@ export default{
 
         const validation = ref([]);
 
+        const loading = ref(false);
+        const loading2 = ref(false);
+
         function createMarket(){
+            loading2.value = true;
             let formData = new FormData();
 
             formData.append('name', newProduct.name);
@@ -340,10 +346,13 @@ export default{
                     validation.value = error.response.data.data;
                 }
                 // isProduct.value = false;
+            }).finally(() => {
+                loading2.value = false;
             });
         }
 
         function editMarket(id){
+            validation.value = [];
             axios.get(Api.BASE_URL + "/marketplace/" + id, {
                 headers: {
                     'Accept': 'application/json',
@@ -363,6 +372,7 @@ export default{
 
         }
         function UpdateMarket(){
+            loading2.value = true;
             // isProduct.value = true;
             axios.put(Api.BASE_URL + "/marketplace/" + editProductContent.value.id, editProductContent.value, {
                 headers: {
@@ -389,9 +399,12 @@ export default{
                     snackbar.icon = 'mdi-close';
                     snackbar.message = 'Gagal mengubah produk: ' + JSON.stringify(error.response.data.data)
                     snackbar.show = true;
+                    validation.value = error.response.data.data;
                 }
 
                 // isProduct.value = false;
+            }).finally(() => {
+                loading2.value = false;
             });
         }
         
@@ -403,6 +416,7 @@ export default{
         }
         
         function getMarkets(){
+            loading.value = true;
             // isProduct.value = true;
             axios.get(Api.BASE_URL + "/marketplace/all", {
                 headers: {
@@ -414,6 +428,7 @@ export default{
             }).catch((error) => {
                 console.log(error)
             }).finally(() => {
+                loading.value = false;
                 // isProduct.value = false;
             });
 
@@ -511,6 +526,8 @@ export default{
             validation,
             onimageSelected,
             deleteMarket,
+            loading2,
+            loading
         }
     }
 }

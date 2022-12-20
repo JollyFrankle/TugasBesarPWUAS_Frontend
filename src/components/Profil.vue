@@ -144,7 +144,7 @@
             </v-container>
 
         <v-dialog transition="dialog-top-transition" v-model="dialogUpdate" persistent max-width="600px">
-                <v-card>
+                <v-card :loading="loading2" :disabled="loading2">
                     <v-toolbar color="blue darken-1" dark class="headline">Update User</v-toolbar>
                     <v-card-text>
                         <v-container>
@@ -178,6 +178,7 @@
                                 v-model="tempUser.bio"
                                 label="Bio"
                                 outlined
+                                rows="5"
                             ></v-textarea>
 
                             <v-text-field
@@ -200,7 +201,7 @@
                 </v-card>
         </v-dialog>
         <v-dialog transition="dialog-top-transition" v-model="dialogPreview" max-width="600px">
-                <v-card>
+                <v-card :disabled="loading2" :loading="loading2">
                     <v-card-title class="headline mb-3">Ganti Foto Profil</v-card-title>
                     <v-card-text>
                         <v-img :src="tempUser.avatarLink != null ? tempUser.avatarLink : (User.avatar != null ? Api.BASE_NONAPI + '/storage/images/users/' + User.avatar : 'https://cdn.vuetifyjs.com/images/john.jpg')" aspect-ratio="1" class="mb-3" @click="onImageClicked">
@@ -250,7 +251,7 @@
         </v-dialog>
 
         <v-dialog v-model="editCommentDialog" max-width="600px">
-            <v-card >
+            <v-card>
                 <v-card-title class="headline">
                     <span>Edit Comment</span>
                     <v-spacer></v-spacer>
@@ -308,7 +309,7 @@
                     </v-list-item>
                 </v-card-actions>
 
-                <v-card class="hover" v-for="com, i in comments" color="grey l lighten-3">
+                <v-card class="hover" v-for="com, i in comments" color="grey l lighten-3" :key="com.id">
                     <div class="d-flex justify-between pt-4 px-5">
                         <v-list-item-avatar size="64">
                             <v-img :src="com.user.avatar != null ? Api.BASE_NONAPI + '/storage/images/users/' + com.user.avatar : 'https://cdn.vuetifyjs.com/images/john.jpg'" alt="PP"></v-img>
@@ -400,6 +401,7 @@ export default {
         const posts = ref([]);
         const comments = ref([]);
         const loadingProfile = ref(true);
+        const loading2 = ref(false);
 
         //state validation
         const validation = ref([]);
@@ -471,6 +473,7 @@ export default {
         }
         // Save User
         function save(){
+            loading2.value = true;
             axios.put(Api.BASE_URL + "/user", tempUser.value, {
                 headers: {
                     'Accept': 'application/json',
@@ -491,6 +494,8 @@ export default {
                     snackbar.color = 'error';
                     snackbar.icon = 'mdi-close';
                     snackbar.message = 'Gagal Update User';
+                }).finally(() => {
+                    loading2.value = false;
                 });
         }
 
@@ -511,6 +516,7 @@ export default {
         }
 
         function uploadAvatar(){
+            loading2.value = true;
             let formData = new FormData();
 
             // console.log(tempUser.value.avatar);
@@ -527,6 +533,11 @@ export default {
                     }
                 }).then((response) =>{
                     User.value = response.data.data;
+                    let tgl = new Date(User.value.tanggal_lahir);
+                    tgl.setHours(tgl.getHours() + 7);
+                    if(User.value.tanggal_lahir !== null) {
+                        User.value.tanggal_lahir = tgl.toISOString().substr(0, 10);
+                    }
                     dialogPreview.value = false;
 
                     snackbar.show = true;
@@ -535,7 +546,9 @@ export default {
                     snackbar.message = 'Berhasil memperbarui foto profil!';
                 }).catch((error)=>{
                     console.log(error)
-                })
+                }).finally(()=>{
+                    loading2.value = false;
+                });
             }   
         }
 
@@ -878,7 +891,8 @@ export default {
             editCommentContent,
             editCommentDialog,
             UserLog,
-            loadingProfile
+            loadingProfile,
+            loading2
         };
     },
     watch: { 

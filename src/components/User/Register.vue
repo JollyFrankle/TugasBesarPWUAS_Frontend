@@ -6,7 +6,8 @@
                 class="mx-auto" 
                 rounded
                 max-width="374" 
-                align-center justify-center>
+                align-center justify-center
+                :loading="loading" :disabled="loading">
 
                 <v-card-title class="text-h6 text-center d-block pb-0">
                     <v-img :src="require('@/assets/UAJY.png')" contain max-height="50"
@@ -30,14 +31,15 @@
                         <v-text-field v-model="user.password" label="Password" prepend-inner-icon="mdi-lock" color="blue" outlined :error-messages="validation.password"
                             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                             :type="showPassword ? 'text' : 'password'"
-                            @click:append="showPassword = !showPassword"></v-text-field> 
+                            @click:append="showPassword = !showPassword"
+                        ></v-text-field> 
 
                         <!-- Input Confrim Password -->
                         <v-text-field v-model="user.confirmPassword" label="Confirm Password" prepend-inner-icon="mdi-lock" color="blue" outlined :error-messages="validation.password"
                             :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
                             :type="showConfirmPassword ? 'text' : 'password'"
-                            @click:append="(showConfirmPassword = !showConfirmPassword)" 
-                            ></v-text-field>
+                            @click:append="(showConfirmPassword = !showConfirmPassword)"
+                        ></v-text-field>
                     </v-card-text>
                     
                     <!-- Card Action -->
@@ -86,6 +88,8 @@ export default {
             color: "",
             icon: "",
         });
+
+        const loading = ref(false);
         //state validation
         const validation = ref([]);
         //vue router
@@ -95,6 +99,7 @@ export default {
         
         // function register
         function Register(){
+            loading.value = true;
             axios.post(Api.BASE_URL + "/register", {
                 name: user.name,
                 username: user.username,
@@ -113,7 +118,14 @@ export default {
             }).catch((error) => {
                 validation.value = error.response.data.data;
 
+                snackbar.show = true;
+                snackbar.message = "Register Failed";
+                snackbar.color = "error";
+                snackbar.icon = "mdi-close";
+
                 console.log(validation)
+            }).finally(() => {
+                loading.value = false;
             });
         } 
         
@@ -125,7 +137,7 @@ export default {
             showPassword,
             showConfirmPassword,
             snackbar,
-            // router,
+            loading
         };
     }
     

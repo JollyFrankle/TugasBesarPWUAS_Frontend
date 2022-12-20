@@ -3,7 +3,7 @@
         <v-container>
             <v-card tile>
                 <v-card-title>
-                    <v-menu offset-y>
+                    <v-menu nudge-bottom="64">
                         <template v-slot:activator="{ on, attrs }">
                             <v-text-field
                                 v-model="UsernameSearch"
@@ -14,12 +14,14 @@
                                 @input="searchUser()"
                             >Search</v-text-field>
                         </template>
-                        <v-list dense>
-                            <v-list-item v-for="user in UserSearch" :key="UserSearch.id">
-                                <v-list-item-title>
-                                    <router-link style="text-decoration: none; color:black;" :to="{ name: 'OtherProfil', params: { id: user.id } }">{{ user.username }}</router-link>
-                                </v-list-item-title>
-                            </v-list-item>
+                        <v-list dense v-if="UserSearch.length > 0">
+                            <v-list-item-group>
+                                <v-list-item v-for="user in UserSearch" :key="UserSearch.id" :to="{ name: 'OtherProfil', params: { id: user.id } }">
+                                    <v-list-item-title>
+                                        {{ user.name }} &bull; <span style="font-weight: 300;">@{{ user.username }}</span>
+                                    </v-list-item-title>
+                                </v-list-item>
+                            </v-list-item-group>
                         </v-list>
                     </v-menu>
                 </v-card-title>
@@ -245,7 +247,7 @@
                     </v-list-item>
                 </v-card-actions>
 
-                <v-card class="hover" v-for="com, i in comments" color="grey l lighten-3">
+                <v-card class="hover" v-for="com, i in comments" color="grey l lighten-3" :key="com.id">
                     <div class="d-flex justify-between py-4 px-5">
                         <v-list-item-avatar size="64">
                             <v-img :src="com.user.avatar != null ? Api.BASE_NONAPI + '/storage/images/users/' + com.user.avatar : 'https://cdn.vuetifyjs.com/images/john.jpg'" alt="PP"></v-img>

@@ -30,7 +30,7 @@
                         class="mx-auto" 
                         rounded
                         align-center 
-                        justify-center>
+                        justify-center :loading="loading" :disabled="loading">
 
                         <v-form @submit.prevent="Login()">
                             <v-card-title class="text-h6 text-center d-block pb-0">
@@ -43,13 +43,12 @@
                             <v-divider></v-divider>
                             <v-card-text class="text-center pb-0">
                                 <!-- <v-form> -->
-                                    <v-text-field v-model="user.username" label="Username/Email" type="text" prepend-inner-icon="mdi-account" color="blue" outlined :error-messages="validation.username"></v-text-field>
+                                    <v-text-field v-model="user.username" label="Username/Email" type="text" prepend-inner-icon="mdi-account" color="blue" outlined :error-messages="validation.username" :loading="loading" :disabled="loading"></v-text-field>
                                     <v-text-field v-model="user.password" label="Password" prepend-inner-icon="mdi-lock" color="blue" outlined :error-messages="validation.password"
                                     :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                     :type="showPassword ? 'text' : 'password'"
                                     @click:append="showPassword = !showPassword"
-                                        
-                                        ></v-text-field>
+                                    :loading="loading" :disabled="loading"></v-text-field>
                                 <!-- </v-form> -->
                             </v-card-text>
                             <v-card-actions>
@@ -60,7 +59,7 @@
                                 <!-- </v-row> -->
                             </v-card-actions>
                             <v-card-actions >
-                                <v-btn :to="{name: 'Register'}"  color="primary"  text class="mx-auto"  @click="Register()"  >Register</v-btn>
+                                <v-btn :to="{name: 'Register'}"  color="primary"  text class="mx-auto"  @click="Register()">Register</v-btn>
                             </v-card-actions>
                         </v-form>
                     </v-card>
@@ -111,11 +110,15 @@ export default {
             color: "",
             icon: "",
         });
+        
+        const loading = ref(false);
+        
         const showPassword = ref(false);
         //state validation
         const validation = ref([]);
 
         function Login(){
+            loading.value = true;
             axios.post(Api.BASE_URL + "/login", {
                 username: user.username,
                 password: user.password
@@ -133,6 +136,8 @@ export default {
                 snackbar.icon = "mdi-alert";
                 snackbar.message = error.response.data.data;
                 snackbar.color = "red";
+            }).finally(() => {
+                loading.value = false;
             });
         }
 
@@ -143,7 +148,8 @@ export default {
             user,
             validation,
             Login,
-            snackbar
+            snackbar,
+            loading
         }
 
     }
