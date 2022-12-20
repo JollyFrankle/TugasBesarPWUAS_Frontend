@@ -1,6 +1,6 @@
 // const IP_ADDR = '10.53.4.164'
 const BASE_NONAPI = `http://20.168.252.140/laravel_b_j/public`;
-const BASE_THIS = `https://gleaming-douhua-3b60d5.netlify.app`;
+const BASE_THIS = `https://atmasocial.netlify.app`;
 const BASE_URL = BASE_NONAPI + '/api';
 
 function getHTMLTimestamp(timestamp) {
